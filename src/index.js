@@ -12,9 +12,9 @@ root.render(
   <Router>
     <Navigation/>
     <Routes>
-      <Route path="/wakatime-addon/" element={<App/>}/>
-      <Route path="/wakatime-addon/global-top" element={<GlobalTop/>}/>
-      <Route path="/wakatime-addon/diagrams" element={<Diagrams/>}/>
+      <Route path="/" element={<App/>}/>
+      <Route path="/global-top" element={<GlobalTop/>}/>
+      <Route path="/diagrams" element={<Diagrams/>}/>
     </Routes>
   </Router>
 );
