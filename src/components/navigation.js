@@ -5,7 +5,7 @@ export default function Navigation() {
   const navItems = [
     {
       name: "leaderboard",
-      path: "/",
+      path: "/leaderboard",
     },
     {
       name: "global top",
