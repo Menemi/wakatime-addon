@@ -54,16 +54,12 @@ body {
 .leaderboard-wrapper,
 .global-top-wrapper,
 .diagrams-wrapper {
-  width: 60%;
+  width: 80%;
   min-height: 100%;
   border: var(--light-gray-border);
   border-radius: 0.5rem;
   padding: 1rem;
   background: var(--background);
-}
-
-.diagrams-wrapper {
-  width: 80%;
 }
 
 .leaderboard-title,
