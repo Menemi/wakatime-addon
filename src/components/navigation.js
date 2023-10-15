@@ -5,15 +5,15 @@ export default function Navigation() {
   const navItems = [
     {
       name: "leaderboard",
-      path: "/",
+      path: "/wakatime-addon/",
     },
     {
       name: "global top",
-      path: "/global-top",
+      path: "/wakatime-addon/global-top",
     },
     {
       name: "diagrams",
-      path: "/diagrams",
+      path: "/wakatime-addon/diagrams",
     },
   ]
 
