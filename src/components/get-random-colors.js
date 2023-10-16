@@ -12,12 +12,24 @@ export default function GetRandomColors(number, backgroundVisibility = 0.2, bord
 
   let backgroundColors = [];
   let borderColors = [];
+  let colorsIndexes1 = [];
+  let colorsIndexes2 = [];
 
   for (let i = 0; i < number; i++) {
-    const index = Math.floor(Math.random() * 24);
+    let index = Math.floor(Math.random() * listOfColors.length);
+    while (colorsIndexes1.find((e) => e === index) !== undefined) {
+      index = Math.floor(Math.random() * listOfColors.length);
+    }
+    colorsIndexes1.push(index)
 
     backgroundColors.push(`rgba(${listOfColors[index][0]}, ${listOfColors[index][1]}, ${listOfColors[index][2]}, ${backgroundVisibility})`)
+
+    while (colorsIndexes2.find((e) => e === index) !== undefined) {
+      index = Math.floor(Math.random() * listOfColors.length);
+    }
+    colorsIndexes2.push(index)
     borderColors.push(`rgba(${listOfColors[index][0]}, ${listOfColors[index][1]}, ${listOfColors[index][2]}, ${borderVisibility})`)
+
   }
 
   return [backgroundColors, borderColors];
