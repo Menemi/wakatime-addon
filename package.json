@@ -1,5 +1,5 @@
 {
-    /* "homepage": "https://menemi.github.io/wakatime-addon", */
+    "homepage": "https://menemi.github.io/wakatime-addon",
     "name": "wakatime-addon",
     "version": "2.0",
     "private": true,
