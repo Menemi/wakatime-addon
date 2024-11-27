@@ -1,26 +1,155 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import styles from './App.module.css'
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+import Leaderboard, {LeaderboardRow} from './modules/Leaderboard/Leaderboard';
+import React, {useEffect, useState} from 'react';
+import SectionObserver from './modules/SectionObserver';
+import GlobalTop from './modules/GlobalTop/GlobalTop';
+import {cn, SECTIONS} from './helpers';
+import {useNotification} from './modules/Notification/NotificationProvider';
+import moment from 'moment';
+import Charts from './modules/Charts/Charts';
+
+export type ChartsData = {
+    username: string,
+    totalCodingTimeMins: number,
+    language: string,
+    ide: string,
+    mainProject: string,
+    isCodingNow: boolean,
 }
 
-export default App;
+const App = () => {
+    const [members, setMembers] = useState(0);
+    const [totalTime, setTotalTime] = useState<{
+        hours: number,
+        minutes: number,
+        seconds: number,
+    }>({
+        hours: 0,
+        minutes: 0,
+        seconds: 0,
+    });
+    const [activeSection, setActiveSection] = useState('');
+    const [chartsData, setChartsData] = useState<ChartsData[]>([])
+
+    const {showNotification} = useNotification();
+
+    useEffect(() => {
+        const handleResize = () => {
+            const newWidth = window.innerWidth;
+            if (newWidth <= 550) {
+                showNotification({
+                    title: 'Размер экрана',
+                    message: 'Для получения полноценного удовольствия от данного веб-ресурса рекомендую использовать ' +
+                        'ноутбук / ПК, ну или хотя бы перевернуть телефон в горизонтальное положение',
+                    type: 'warning',
+                    hasAcceptBtn: true,
+                    onCloseMs: 7000,
+                })
+            }
+        };
+
+        window.addEventListener('resize', handleResize);
+        handleResize();
+
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, []);
+
+    const handleTimeChange = (time: { hours: number, minutes: number, seconds: number }) => {
+        setTotalTime(curTime => ({
+            hours: curTime.hours += time.hours,
+            minutes: curTime.minutes += time.minutes,
+            seconds: curTime.seconds += time.seconds,
+        }));
+    };
+
+    const getTotalTime = () => {
+        const mins = totalTime.minutes + (Math.floor(totalTime.seconds / 60));
+        const hrs = totalTime.hours + (Math.floor(mins / 60));
+
+        const today = new Date();
+        const dayOfWeek = today.getDay();
+        const diffToMonday = (dayOfWeek === 0 ? -6 : 1) - dayOfWeek;
+
+        const weekStart = new Date(today);
+        weekStart.setDate(today.getDate() + diffToMonday);
+        weekStart.setHours(0, 0, 0, 0);
+
+        const weekEnd = new Date(weekStart);
+        weekEnd.setDate(weekStart.getDate() + 6);
+        weekEnd.setHours(23, 59, 59, 999);
+
+        return <>
+            <div className={styles.blackHighLight}>
+                {hrs} hrs {mins % 60} mins
+            </div>
+            <>in</>
+            <div className={styles.blueHighLight}>
+                {moment(weekStart).format('DD.MM.YYYY')} – {moment(weekEnd).format('DD.MM.YYYY')}
+            </div>
+        </>
+    }
+
+    const handleLoadData = (rawData: LeaderboardRow[]) => setChartsData(
+        rawData.reduce<ChartsData[]>((acc, item) => {
+            const time = item.currentWeekCodeTime.split(':')
+            const hrs = +time[0];
+            const mins = +time[1];
+            const secs = +time[2];
+
+            if (hrs + mins + secs !== 0) {
+                acc.push({
+                    username: item.username,
+                    totalCodingTimeMins: (hrs * 60) + mins + (Math.floor(secs / 60)),
+                    language: item.language,
+                    ide: item.ide,
+                    mainProject: item.mainProject,
+                    isCodingNow: item.isCodingNow,
+                })
+            }
+
+            return acc;
+        }, [])
+    )
+
+    return <div className={styles.container}>
+        <header className={styles.header}>
+            <div className={styles.headerMainInfo}>
+                <div className={styles.titleContainer}>
+                    <h1 className={cn([styles.title, styles.blackHighLight])}>Leaderboard • ITMO Team</h1>
+                    <div className={styles.blueHighLight}>{members} members</div>
+                </div>
+                <div className={styles.totalTime}>{getTotalTime()}</div>
+            </div>
+            <div className={styles.headerButtonsContainer}>
+                {SECTIONS.map((section) => (
+                    <a
+                        key={section.id}
+                        href={`#${section.id}`}
+                        className={activeSection === section.id ? styles.activeButton : styles.button}
+                    >
+                        {section.title}
+                    </a>
+                ))}
+            </div>
+        </header>
+        <Leaderboard
+            tableCode='2PACX-1vTkWoLikMzDn43FXNi_yS73ReU3Ay_RT1ue4N69X1omhlECHWqas20aGHCzGQ1T9bw4FTG2W975pbRP'
+            onMembersChange={(count) => setMembers(count)}
+            onTimeChange={handleTimeChange}
+            onLoad={handleLoadData}
+        />
+        <GlobalTop
+            tableCode='2PACX-1vSBOyyJfO0qXuA8WIxiQsDD5wVib2NT7U2RwrvV8dv26OZKKBn5ZJyS-VT3f-f_ekb3JtcxgdAA3Thb'
+        />
+        <Charts isLoading={false} data={chartsData}/>
+        <SectionObserver
+            sections={SECTIONS.map(section => section.id)}
+            setActiveSection={setActiveSection}
+        />
+    </div>;
+}
+
+export default App

@@ -1,0 +1,120 @@
+.container {
+    display: flex;
+    gap: 32px;
+}
+
+.titleContainer {
+    display: flex;
+    align-items: center;
+}
+
+.title {
+    height: max-content;
+    writing-mode: vertical-rl;
+    text-orientation: sideways;
+    transform: rotate(180deg);
+    color: black;
+}
+
+.tableContainer {
+    display: flex;
+    width: 100%;
+    max-height: calc(100dvh - 100px - 64px - 32px + 4px);
+    overflow: auto;
+    border: 3px solid var(--border);
+    border-radius: 8px;
+}
+
+@media (max-width: 1070px) {
+    .container {
+        flex-direction: column;
+    }
+
+    .titleContainer {
+        display: flex;
+        align-items: center;
+    }
+
+    .title {
+        height: max-content;
+        writing-mode: horizontal-tb;
+        transform: rotate(0deg);
+    }
+
+    .tableContainer {
+        max-height: calc(100dvh - 100px - 64px - 32px + 4px - 64px);
+    }
+}
+
+@media (max-height: 550px) {
+    .titleContainer {
+        display: none;
+    }
+
+    .tableContainer {
+        max-height: calc(100dvh - 100px - 32px + 4px);
+    }
+}
+
+.table {
+    position: relative;
+    width: 100%;
+    padding: 0 16px;
+    border-spacing: 0;
+}
+
+.row {
+    height: 50px;
+}
+
+.tableHead .row {
+    position: sticky;
+    top: 0;
+    background-color: #fff;
+}
+
+.row:nth-child(-n + 3) {
+    font-weight: 800;
+}
+
+.cell {
+    min-width: max-content;
+    padding: 4px 8px;
+    white-space: nowrap;
+}
+
+.tableHead .cell {
+    color: #000;
+    font-weight: 800;
+}
+
+.tableBody .row:hover {
+    background-color: #244A7F0F;
+}
+
+.tableHead .cell:nth-child(-n + 5),
+.tableBody .row:nth-child(-n + 3):hover {
+    background-color: rgba(205, 127, 50, .6);
+}
+
+.tableHead .cell:nth-child(-n + 4),
+.tableBody .row:nth-child(-n + 2):hover {
+    background-color: rgba(192, 192, 192, .6);
+}
+
+.tableHead .cell:nth-child(-n + 3),
+.tableBody .row:nth-child(-n + 1):hover {
+    background-color: rgba(255, 215, 0, .6);
+}
+
+.tableHead .cell:nth-child(-n + 2) {
+    background-color: #fff;
+}
+
+.cell {
+    border-bottom: 1px solid var(--border);
+}
+
+.tableBody .row:last-child .cell {
+    border: none;
+}

@@ -1,0 +1,75 @@
+.containerBackground {
+    width: 344px;
+    background-color: #fff;
+    position: fixed;
+    bottom: 16px;
+    right: -344px;
+    opacity: 0;
+    z-index: 1;
+}
+
+.containerBackground.visible {
+    right: 16px;
+    opacity: 1;
+}
+
+.container {
+    display: flex;
+    gap: 8px;
+    /*width: 344px;*/
+    padding: 16px;
+    border-radius: 8px;
+}
+
+.textContainer {
+    display: flex;
+    flex-direction: column;
+}
+
+.title {
+    font-size: 15px;
+}
+
+.message {
+    font-size: 13px;
+}
+
+.acceptBtn {
+    width: max-content;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-top: 8px;
+    padding: 4px 8px;
+}
+
+.info {
+    background-color: var(--info-background);
+
+    .acceptBtn:hover {
+        background-color: var(--info-background-hover);
+    }
+}
+
+.success {
+    background-color: var(--success-background);
+
+    .acceptBtn:hover {
+        background-color: var(--success-background-hover);
+    }
+}
+
+.warning {
+    background-color: var(--warning-background);
+
+    .acceptBtn:hover {
+        background-color: var(--warning-background-hover);
+    }
+}
+
+.error {
+    background-color: var(--error-background);
+
+    .acceptBtn:hover {
+        background-color: var(--error-background-hover);
+    }
+}

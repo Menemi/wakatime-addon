@@ -1,0 +1,90 @@
+.container {
+    display: flex;
+    gap: 32px;
+    min-height: calc(100dvh - 100px - 64px + 4px);
+    padding-bottom: 32px;
+}
+
+.titleContainer {
+    display: flex;
+    align-items: center;
+}
+
+.title {
+    height: max-content;
+    writing-mode: vertical-rl;
+    text-orientation: sideways;
+    transform: rotate(180deg);
+    color: black;
+}
+
+.chartsContainer {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.bubbleChart {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    border: 3px solid var(--border);
+    border-radius: 8px;
+}
+
+.simpleChartsContainer {
+    display: flex;
+    justify-content: space-evenly;
+    gap: 16px;
+}
+
+.simpleChart {
+    height: 400px;
+}
+
+@media (max-height: 800px) or (max-width: 800px) {
+    .bubbleChart {
+        display: none;
+    }
+
+    .simpleChartsContainer {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .simpleChart {
+        width: 400px;
+        height: auto;
+    }
+}
+
+@media (max-width: 1070px) {
+    .container {
+        flex-direction: column;
+    }
+
+    .titleContainer {
+        display: flex;
+        align-items: center;
+    }
+
+    .title {
+        height: max-content;
+        writing-mode: horizontal-tb;
+        transform: rotate(0deg);
+    }
+}
+
+@media (max-height: 550px) {
+    .titleContainer {
+        display: none;
+    }
+}
+
+.tooltipContainer {
+    width: 100px;
+    height: 30px;
+    background-color: black;
+    border-radius: 16px;
+}
