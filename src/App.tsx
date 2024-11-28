@@ -119,7 +119,8 @@ const App = () => {
             <div className={styles.headerMainInfo}>
                 <div className={styles.titleContainer}>
                     <h1 className={cn([styles.title, styles.blackHighLight])}>Leaderboard • ITMO Team</h1>
-                    <div className={styles.blueHighLight}>{members} members</div>
+                    {/*<div className={styles.blueHighLight}>{members} members</div>*/}
+                    <div className={styles.blueHighLight}>{window.innerWidth}x{window.innerHeight}</div>
                 </div>
                 <div className={styles.totalTime}>{getTotalTime()}</div>
             </div>
