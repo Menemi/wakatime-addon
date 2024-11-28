@@ -2,57 +2,58 @@ import styles from './Charts.module.css';
 
 import React from 'react';
 import DoughnutChart from './DoughnutChart';
-import {ChartsData} from '../../App';
+import { ChartsData } from '../../App';
 import BubbleChart from './BubbleChart';
+import Loader from 'react-ts-loaders';
 
 type ChartsProps = {
-    isLoading: boolean,
-    error?: string,
-    data: ChartsData[],
+    data: ChartsData[];
+    error?: string;
 };
 
-const Charts: React.FC<ChartsProps> = ({isLoading, error, data}) => {
-    const skeleton = <>loading</>;
-
-    const errorSkeleton = <>error</>;
+const Charts: React.FC<ChartsProps> = ({ data, error }) => {
+    const isLoading = data.length === 0;
 
     const chartSize = {
-        width: window.innerWidth < 1070
-            ? window.innerWidth - 64 - 6
-            : window.innerWidth - 64 - 32 - 32 - 6,
-        height: window.innerWidth > 1070
-            ? window.innerHeight - 128 - 64 - 6
-            : window.innerHeight - 128 - 64 - 32 - 32 - 6,
+        width: window.innerWidth < 1070 ? window.innerWidth - 64 - 6 : window.innerWidth - 64 - 32 - 32 - 6,
+        height:
+            window.innerWidth > 1070 ? window.innerHeight - 128 - 64 - 6 : window.innerHeight - 128 - 64 - 32 - 32 - 6,
     };
 
-    const charts = <>
-        <div className={styles.bubbleChart}>
-            <BubbleChart data={data.reverse()} size={chartSize}/>
-        </div>
-        <div className={styles.simpleChartsContainer}>
-            <div className={styles.simpleChart}>
-                <DoughnutChart rawData={data.map(item => item.ide)}/>
+    return (
+        <div id="charts" className={styles.container}>
+            <div className={styles.titleContainer}>
+                <h2 className={styles.title}>
+                    {window.innerWidth <= 800 || window.innerHeight <= 800 ? 'Графики' : 'Графики (посмотри и ниже)'}
+                </h2>
             </div>
-            <div className={styles.simpleChart}>
-                <DoughnutChart rawData={data.map(item => item.language)}/>
+            <div className={styles.chartsContainer} style={{ gap: isLoading ? 48 : 0 }}>
+                <div className={styles.bubbleChart} style={{ height: chartSize.height }}>
+                    {isLoading ? (
+                        <Loader type="dotspinner" color="var(--blue)" size={150} />
+                    ) : (
+                        <BubbleChart data={data.reverse()} size={chartSize} />
+                    )}
+                </div>
+                <div className={styles.simpleChartsContainer}>
+                    <div className={styles.simpleChart}>
+                        {isLoading ? (
+                            <Loader type="dotspinner" color="var(--blue)" size={100} />
+                        ) : (
+                            <DoughnutChart rawData={data.map((item) => item.ide)} />
+                        )}
+                    </div>
+                    <div className={styles.simpleChart}>
+                        {isLoading ? (
+                            <Loader type="dotspinner" color="var(--blue)" size={100} />
+                        ) : (
+                            <DoughnutChart rawData={data.map((item) => item.language)} />
+                        )}
+                    </div>
+                </div>
             </div>
         </div>
-    </>;
-
-    return <div id='charts' className={styles.container} style={{height: chartSize.height}}>
-        <div className={styles.titleContainer}><h2 className={styles.title}>
-            {window.innerWidth <= 800 || window.innerHeight <= 800
-                ? 'Графики'
-                : 'Графики (посмотри и ниже)'}
-        </h2></div>
-        <div className={styles.chartsContainer}>
-            {isLoading
-                ? skeleton
-                : error
-                    ? errorSkeleton
-                    : charts}
-        </div>
-    </div>;
-}
+    );
+};
 
 export default Charts;

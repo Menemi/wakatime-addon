@@ -1,21 +1,21 @@
-import React, {createContext, useContext, useState, ReactNode} from 'react';
+import React, { createContext, useContext, useState, ReactNode } from 'react';
 import Notification from './Notification';
 
 type ShowNotificationProps = {
-    message: string,
-    type: 'info' | 'success' | 'warning' | 'error',
-    title?: string,
-    hasAcceptBtn?: true,
-    onCloseMs?: number,
-}
+    message: string;
+    type: 'info' | 'success' | 'warning' | 'error';
+    title?: string;
+    hasAcceptBtn?: true;
+    onCloseMs?: number;
+};
 
 type NotificationContextType = {
     showNotification: (notify: ShowNotificationProps) => void;
-}
+};
 
 const NotificationContext = createContext<NotificationContextType | undefined>(undefined);
 
-export const NotificationProvider: React.FC<{ children: ReactNode }> = ({children}) => {
+export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [notification, setNotification] = useState<ShowNotificationProps | null>(null);
     const [isVisible, setIsVisible] = useState(false);
 
@@ -29,7 +29,7 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({childre
     };
 
     return (
-        <NotificationContext.Provider value={{showNotification}}>
+        <NotificationContext.Provider value={{ showNotification }}>
             {children}
             <Notification
                 title={notification?.title}

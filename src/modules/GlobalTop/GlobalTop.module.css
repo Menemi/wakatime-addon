@@ -63,8 +63,23 @@
     border-spacing: 0;
 }
 
-.row {
+.row, .skeletonRow {
     height: 50px;
+}
+
+.skeletonData {
+    height: 20px;
+    border-radius: 8px;
+    background: #eee;
+    background: linear-gradient(110deg, var(--border) 8%, #e1e1e1 18%, var(--border) 33%);
+    background-size: 200% 100%;
+    animation: 1.5s shine linear infinite;
+}
+
+@keyframes shine {
+    to {
+        background-position-x: -200%;
+    }
 }
 
 .tableHead .row {
@@ -77,10 +92,11 @@
     font-weight: 800;
 }
 
-.cell {
+.cell, .skeletonCell {
     min-width: max-content;
     padding: 4px 8px;
     white-space: nowrap;
+    border-bottom: 1px solid var(--border);
 }
 
 .tableHead .cell {
@@ -111,10 +127,7 @@
     background-color: #fff;
 }
 
-.cell {
-    border-bottom: 1px solid var(--border);
-}
-
-.tableBody .row:last-child .cell {
+.tableBody .row:last-child .cell,
+.tableBody .skeletonRow:last-child .skeletonCell {
     border: none;
 }

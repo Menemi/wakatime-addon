@@ -3,13 +3,11 @@ import React from 'react';
 type SectionObserverProps = {
     sections: string[];
     setActiveSection: (sectionId: string) => void;
-}
+};
 
-const SectionObserver: React.FC<SectionObserverProps> = ({sections, setActiveSection}) => {
+const SectionObserver: React.FC<SectionObserverProps> = ({ sections, setActiveSection }) => {
     React.useEffect(() => {
-        const sectionElements = sections.map((id) =>
-            document.getElementById(id)
-        );
+        const sectionElements = sections.map((id) => document.getElementById(id));
 
         const observer = new IntersectionObserver(
             (entries) => {
@@ -18,7 +16,7 @@ const SectionObserver: React.FC<SectionObserverProps> = ({sections, setActiveSec
                     setActiveSection(visibleSection.target.id);
                 }
             },
-            {rootMargin: '-128px 0px 0px 0px', threshold: 0.6}
+            { rootMargin: '-128px 0px 0px 0px', threshold: 0.6 },
         );
 
         sectionElements.forEach((element) => {
@@ -37,6 +35,6 @@ const SectionObserver: React.FC<SectionObserverProps> = ({sections, setActiveSec
     }, [sections, setActiveSection]);
 
     return null;
-}
+};
 
 export default SectionObserver;

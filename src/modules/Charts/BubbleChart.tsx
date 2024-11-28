@@ -1,8 +1,8 @@
 import styles from './Charts.module.css';
 
-import React, {useEffect, useRef} from 'react';
+import React, { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
-import {ChartsData} from '../../App';
+import { ChartsData } from '../../App';
 
 interface SimulationNodeDatum extends d3.SimulationNodeDatum {
     username: string;
@@ -12,12 +12,12 @@ interface SimulationNodeDatum extends d3.SimulationNodeDatum {
 type BubbleChartProps = {
     data: ChartsData[];
     size: {
-        width: number,
-        height: number,
-    }
+        width: number;
+        height: number;
+    };
 };
 
-const BubbleChart: React.FC<BubbleChartProps> = ({data, size}) => {
+const BubbleChart: React.FC<BubbleChartProps> = ({ data, size }) => {
     const svgRef = useRef<SVGSVGElement | null>(null);
     const tooltipRef = useRef<HTMLDivElement | null>(null);
 
@@ -44,7 +44,7 @@ const BubbleChart: React.FC<BubbleChartProps> = ({data, size}) => {
             .force('y', d3.forceY(size.height / 2).strength(0.1))
             .force(
                 'collision',
-                d3.forceCollide<SimulationNodeDatum>((d) => Math.sqrt(d.value) * 2.5 + 1)
+                d3.forceCollide<SimulationNodeDatum>((d) => Math.sqrt(d.value) * 2.5 + 1),
             )
             .on('tick', ticked);
 
@@ -57,7 +57,7 @@ const BubbleChart: React.FC<BubbleChartProps> = ({data, size}) => {
                 .attr('cy', (d) => d.y!)
                 .attr('fill', (d, i) => d3.schemeCategory10[i % 10])
                 .attr('stroke', '#fff')
-                .attr('stroke-size.width', 2)
+                .attr('stroke-size.width', 2);
 
             svg.selectAll('text')
                 .data(simulationData)
@@ -76,7 +76,7 @@ const BubbleChart: React.FC<BubbleChartProps> = ({data, size}) => {
         };
     }, [data, size.width, size.height]);
 
-    return <svg ref={svgRef} width={size.width} height={size.height}/>;
+    return <svg ref={svgRef} width={size.width} height={size.height} />;
 };
 
 export default BubbleChart;

@@ -28,7 +28,6 @@
     cursor: default;
     -webkit-touch-callout: none;
     -webkit-user-select: none;
-    -khtml-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
@@ -108,6 +107,24 @@ button {
     gap: 8px;
 }
 
+.title {
+    font-size: 2em;
+}
+
+.members {
+    font-size: 1.25em;
+}
+
+.skeletonMembers {
+    width: 113px;
+    height: 27px;
+}
+
+.skeletonTotalTime {
+    width: 179px;
+    height: 32px;
+}
+
 .blackHighLight {
     color: black;
 }
@@ -119,19 +136,62 @@ button {
     font-weight: bold;
 }
 
+.skeleton {
+    border-radius: 8px;
+    background: #eee;
+    background: linear-gradient(110deg, var(--border) 8%, #e1e1e1 18%, var(--border) 33%);
+    background-size: 200% 100%;
+    animation: 1.5s shine linear infinite;
+}
+
+@keyframes shine {
+    to {
+        background-position-x: -200%;
+    }
+}
+
 @media (max-width: 860px) {
     .headerButtonsContainer {
         display: none;
     }
 }
 
-@media (max-width: 540px) {
+@media (max-width: 560px) {
     .title {
         font-size: 1.5em;
     }
 
+    .members {
+        font-size: 0.9375em;
+    }
+
+    .skeletonMembers {
+        width: 85px;
+        height: 20px;
+    }
+
     .totalTime {
         font-size: 1em;
+    }
+
+    .skeletonTotalTime {
+        width: 110px;
+        height: 22px;
+    }
+}
+
+@media (max-width: 450px) {
+    .title {
+        font-size: 1.45em;
+    }
+
+    .members {
+        font-size: 0.78125em;
+    }
+
+    .skeletonMembers {
+        width: 70px;
+        height: 17px;
     }
 }
 
@@ -152,7 +212,21 @@ button {
         gap: 8px;
     }
 
-    .title, .totalTime {
+    .title {
         font-size: 1em;
+    }
+
+    .totalTime, .members {
+        font-size: 0.75em;
+    }
+
+    .skeletonMembers {
+        width: 67px;
+        height: 16px;
+    }
+
+    .skeletonTotalTime {
+        width: 82px;
+        height: 16px;
     }
 }

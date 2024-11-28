@@ -1,25 +1,25 @@
 import styles from './GlobalTop.module.css';
 
-import React, {useEffect, useState} from 'react';
-import {useAsync} from 'react-use-custom-hooks';
+import React, { useEffect, useState } from 'react';
+import { useAsync } from 'react-use-custom-hooks';
 import axios from 'axios';
-import {timeToString} from '../../helpers';
+import { timeToString } from '../../helpers';
 
 type GlobalTopProps = {
-    tableCode: string,
+    tableCode: string;
 };
 
 type GlobalTopRow = {
-    number: string,
-    username: string,
-    top1: string,
-    top2: string,
-    top3: string,
-    codeTime: string,
-    bestWeek: string,
-}
+    number: string;
+    username: string;
+    top1: string;
+    top2: string;
+    top3: string;
+    codeTime: string;
+    bestWeek: string;
+};
 
-const GlobalTop: React.FC<GlobalTopProps> = ({tableCode}) => {
+const GlobalTop: React.FC<GlobalTopProps> = ({ tableCode }) => {
     const [data, setData] = useState<GlobalTopRow[]>([]);
 
     const csvUrl = `https://docs.google.com/spreadsheets/d/e/${tableCode}/pub?gid=0&single=true&output=csv`;
@@ -37,16 +37,15 @@ const GlobalTop: React.FC<GlobalTopProps> = ({tableCode}) => {
                 top3: values[4],
                 codeTime: values[6],
                 bestWeek: `${values[7]} – ${values[8]}`,
-            }
+            };
         }, {});
     };
 
-    const [
-        rawData,
-        isLoading,
-        error,
-        load,
-    ] = useAsync(() => axios.get(csvUrl).then(response => response.data), {}, []);
+    const [rawData, isLoading, error, load] = useAsync(
+        () => axios.get(csvUrl).then((response) => response.data),
+        {},
+        [],
+    );
 
     useEffect(() => {
         if (!isLoading && !error && data.length === 0) {
@@ -55,50 +54,55 @@ const GlobalTop: React.FC<GlobalTopProps> = ({tableCode}) => {
         }
     }, [isLoading, error]);
 
-    const skeleton = <>loading</>;
+    const skeletonRowsNumber = Math.floor(window.innerHeight / 50) - 4;
+
+    const skeleton = Array.from({ length: skeletonRowsNumber }).map((_, key) => (
+        <tr key={key} className={styles.skeletonRow}>
+            {Array.from({ length: 7 }).map((__, idx) => (
+                <td key={idx} className={styles.skeletonCell}>
+                    <div className={styles.skeletonData}></div>
+                </td>
+            ))}
+        </tr>
+    ));
 
     const errorSkeleton = <>error</>;
 
-    const table = <table className={styles.table}>
-        <thead className={styles.tableHead}>
-        <tr className={styles.row}>
-            <td className={styles.cell}>Rank</td>
-            <td className={styles.cell}>Username</td>
-            <td className={styles.cell}>Top 1</td>
-            <td className={styles.cell}>Top 2</td>
-            <td className={styles.cell}>Top 3</td>
-            <td className={styles.cell}>Best Week [BW]</td>
-            <td className={styles.cell}>BW Code Time</td>
-        </tr>
-        </thead>
-        <tbody className={styles.tableBody}>
-        {data.map((row: GlobalTopRow, key: number) => <tr key={key} className={styles.row}>
+    const table = data.map((row: GlobalTopRow, key: number) => (
+        <tr key={key} className={styles.row}>
             <td className={styles.cell}>{row.number}</td>
             <td className={styles.cell}>{row.username}</td>
             <td className={styles.cell}>{row.top1 || '–'}</td>
             <td className={styles.cell}>{row.top2 || '–'}</td>
             <td className={styles.cell}>{row.top3 || '–'}</td>
             <td className={styles.cell}>{row.bestWeek}</td>
-            <td className={styles.cell}>
-                {row.codeTime
-                    ? timeToString(row.codeTime)
-                    : <>–</>
-                }
-            </td>
-        </tr>)}
-        </tbody>
-    </table>;
+            <td className={styles.cell}>{row.codeTime ? timeToString(row.codeTime) : <>–</>}</td>
+        </tr>
+    ));
 
-    return <div id='top' className={styles.container}>
-        <div className={styles.titleContainer}><h2 className={styles.title}>Топ недель</h2></div>
-        <div className={styles.tableContainer}>
-            {isLoading
-                ? skeleton
-                : error
-                    ? errorSkeleton
-                    : table}
+    return (
+        <div id="top" className={styles.container}>
+            <div className={styles.titleContainer}>
+                <h2 className={styles.title}>Топ недель</h2>
+            </div>
+            <div className={styles.tableContainer}>
+                <table className={styles.table}>
+                    <thead className={styles.tableHead}>
+                        <tr className={styles.row}>
+                            <td className={styles.cell}>Rank</td>
+                            <td className={styles.cell}>Username</td>
+                            <td className={styles.cell}>Top 1</td>
+                            <td className={styles.cell}>Top 2</td>
+                            <td className={styles.cell}>Top 3</td>
+                            <td className={styles.cell}>Best Week [BW]</td>
+                            <td className={styles.cell}>BW Code Time</td>
+                        </tr>
+                    </thead>
+                    <tbody className={styles.tableBody}>{isLoading ? skeleton : error ? errorSkeleton : table}</tbody>
+                </table>
+            </div>
         </div>
-    </div>;
-}
+    );
+};
 
 export default GlobalTop;
