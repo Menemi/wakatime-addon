@@ -43,7 +43,7 @@
     height: 400px;
 }
 
-@media (max-height: 800px) or (max-width: 800px) {
+@media (max-height: 600px) or (max-width: 600px) {
     .bubbleChart {
         display: none;
     }
@@ -87,4 +87,33 @@
     height: 30px;
     background-color: black;
     border-radius: 16px;
+}
+
+.errorContainer {
+    width: 100%;
+    height: calc(100dvh - 100px - 64px - 32px + 4px);
+    border: 3px solid var(--border);
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.errorText {
+    text-align: center;
+}
+
+.refreshButton {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-top: 8px;
+    padding: 8px 16px;
+    background-color: var(--info-background);
+}
+
+.refreshButton:hover {
+    background-color: var(--info-background-hover);
+    cursor: pointer;
 }

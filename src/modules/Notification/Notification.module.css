@@ -4,6 +4,7 @@
     position: fixed;
     bottom: 16px;
     right: -344px;
+    border-radius: 8px;
     opacity: 0;
     z-index: 1;
 }
@@ -16,7 +17,7 @@
 .container {
     display: flex;
     gap: 8px;
-    /*width: 344px;*/
+    width: 344px;
     padding: 16px;
     border-radius: 8px;
 }
@@ -40,6 +41,10 @@
     border-radius: 8px;
     margin-top: 8px;
     padding: 4px 8px;
+}
+
+.acceptBtn:hover {
+    cursor: pointer;
 }
 
 .info {

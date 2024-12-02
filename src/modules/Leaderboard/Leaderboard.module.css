@@ -19,10 +19,15 @@
 .tableContainer {
     display: flex;
     width: 100%;
-    max-height: calc(100dvh - 100px - 64px - 32px + 4px);
+    height: calc(100dvh - 100px - 64px - 32px + 4px);
     overflow: auto;
     border: 3px solid var(--border);
     border-radius: 8px;
+}
+
+.tableContainer.error {
+    align-items: center;
+    justify-content: center;
 }
 
 @media (max-width: 1070px) {
@@ -42,7 +47,7 @@
     }
 
     .tableContainer {
-        max-height: calc(100dvh - 100px - 64px - 32px + 4px - 64px);
+        height: calc(100dvh - 100px - 64px - 32px + 4px - 64px);
     }
 }
 
@@ -52,7 +57,7 @@
     }
 
     .tableContainer {
-        max-height: calc(100dvh - 100px - 32px + 4px);
+        height: calc(100dvh - 100px - 32px + 4px);
     }
 }
 
@@ -80,6 +85,30 @@
     to {
         background-position-x: -200%;
     }
+}
+
+.errorContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.errorText {
+    text-align: center;
+}
+
+.refreshButton {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-top: 8px;
+    padding: 8px 16px;
+    background-color: var(--info-background);
+}
+
+.refreshButton:hover {
+    background-color: var(--info-background-hover);
+    cursor: pointer;
 }
 
 .tableHead .row {

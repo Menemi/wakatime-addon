@@ -1,5 +1,3 @@
-import styles from './Charts.module.css';
-
 import React, { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
 import { ChartsData } from '../../App';
@@ -19,7 +17,6 @@ type BubbleChartProps = {
 
 const BubbleChart: React.FC<BubbleChartProps> = ({ data, size }) => {
     const svgRef = useRef<SVGSVGElement | null>(null);
-    const tooltipRef = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
         if (!data || data.length === 0) return;
@@ -28,8 +25,6 @@ const BubbleChart: React.FC<BubbleChartProps> = ({ data, size }) => {
         svg.selectAll('*').remove();
 
         svg.attr('viewBox', `0 0 ${size.width} ${size.height}`).attr('preserveAspectRatio', 'xMidYMid meet');
-
-        const tooltip = d3.select(tooltipRef.current);
 
         const simulationData: SimulationNodeDatum[] = data.map((d) => ({
             x: Math.random() * size.width,

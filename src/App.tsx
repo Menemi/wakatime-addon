@@ -4,10 +4,12 @@ import Leaderboard, { LeaderboardRow } from './modules/Leaderboard/Leaderboard';
 import React, { useEffect, useState } from 'react';
 import SectionObserver from './modules/SectionObserver';
 import GlobalTop from './modules/GlobalTop/GlobalTop';
-import { cn, SECTIONS } from './helpers';
+import {cn, numberToStringTime, SECTIONS} from './helpers';
 import { useNotification } from './modules/Notification/NotificationProvider';
 import moment from 'moment';
 import Charts from './modules/Charts/Charts';
+import {Simulate} from "react-dom/test-utils";
+import error = Simulate.error;
 
 export type ChartsData = {
     username: string;
@@ -20,17 +22,10 @@ export type ChartsData = {
 
 const App = () => {
     const [members, setMembers] = useState(0);
-    const [totalTime, setTotalTime] = useState<{
-        hours: number;
-        minutes: number;
-        seconds: number;
-    }>({
-        hours: 0,
-        minutes: 0,
-        seconds: 0,
-    });
+    const [totalTime, setTotalTime] = useState(0);
     const [activeSection, setActiveSection] = useState('');
     const [chartsData, setChartsData] = useState<ChartsData[]>([]);
+    const [errorMessage, setErrorMessage] = useState<string>();
 
     const { showNotification } = useNotification();
 
@@ -58,18 +53,7 @@ const App = () => {
         };
     }, []);
 
-    const handleTimeChange = (time: { hours: number; minutes: number; seconds: number }) => {
-        setTotalTime((curTime) => ({
-            hours: (curTime.hours += time.hours),
-            minutes: (curTime.minutes += time.minutes),
-            seconds: (curTime.seconds += time.seconds),
-        }));
-    };
-
     const getTotalTime = () => {
-        const mins = totalTime.minutes + Math.floor(totalTime.seconds / 60);
-        const hrs = totalTime.hours + Math.floor(mins / 60);
-
         const today = new Date();
         const dayOfWeek = today.getDay();
         const diffToMonday = (dayOfWeek === 0 ? -6 : 1) - dayOfWeek;
@@ -88,7 +72,7 @@ const App = () => {
                     <div className={cn([styles.skeletonTotalTime, styles.skeleton])}></div>
                 ) : (
                     <div className={styles.blackHighLight}>
-                        {hrs} hrs {mins % 60} mins
+                        {numberToStringTime(totalTime)}
                     </div>
                 )}
                 <>in</>
@@ -102,17 +86,12 @@ const App = () => {
     const handleLoadData = (rawData: LeaderboardRow[]) =>
         setChartsData(
             rawData.reduce<ChartsData[]>((acc, item) => {
-                const time = item.currentWeekCodeTime.split(':');
-                const hrs = +time[0];
-                const mins = +time[1];
-                const secs = +time[2];
-
-                if (hrs + mins + secs !== 0) {
+                if (item.currentWeekCodeTime !== 0) {
                     acc.push({
                         username: item.username,
-                        totalCodingTimeMins: hrs * 60 + mins + Math.floor(secs / 60),
+                        totalCodingTimeMins: (item.currentWeekCodeTime - (item.currentWeekCodeTime % 60)) / 60,
                         language: item.language,
-                        ide: item.ide,
+                        ide: item.ide.toLowerCase().includes('rider') ? 'Rider' : item.ide,
                         mainProject: item.mainProject,
                         isCodingNow: item.isCodingNow,
                     });
@@ -151,11 +130,12 @@ const App = () => {
             <Leaderboard
                 tableCode="2PACX-1vTkWoLikMzDn43FXNi_yS73ReU3Ay_RT1ue4N69X1omhlECHWqas20aGHCzGQ1T9bw4FTG2W975pbRP"
                 onMembersChange={(count) => setMembers(count)}
-                onTimeChange={handleTimeChange}
+                onTimeChange={(time: number)=> setTotalTime(q => q + time)}
                 onLoad={handleLoadData}
+                onError={(message: string) => setErrorMessage(message)}
             />
             <GlobalTop tableCode="2PACX-1vSBOyyJfO0qXuA8WIxiQsDD5wVib2NT7U2RwrvV8dv26OZKKBn5ZJyS-VT3f-f_ekb3JtcxgdAA3Thb" />
-            <Charts data={chartsData} />
+            <Charts data={chartsData} error={errorMessage} />
             <SectionObserver sections={SECTIONS.map((section) => section.id)} setActiveSection={setActiveSection} />
         </div>
     );
