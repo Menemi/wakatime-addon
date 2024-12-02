@@ -3,8 +3,7 @@ import styles from './GlobalTop.module.css';
 import React, { useEffect, useState } from 'react';
 import { useAsync } from 'react-use-custom-hooks';
 import axios from 'axios';
-import {calcGlobalTopScore, cn, numberToStringTime, timeToNumber} from '../../helpers';
-import { sort } from 'd3';
+import { calcGlobalTopScore, cn, numberToStringTime, timeToNumber } from '../../helpers';
 
 type GlobalTopProps = {
     tableCode: string;

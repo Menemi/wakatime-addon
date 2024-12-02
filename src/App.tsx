@@ -4,12 +4,10 @@ import Leaderboard, { LeaderboardRow } from './modules/Leaderboard/Leaderboard';
 import React, { useEffect, useState } from 'react';
 import SectionObserver from './modules/SectionObserver';
 import GlobalTop from './modules/GlobalTop/GlobalTop';
-import {cn, numberToStringTime, SECTIONS} from './helpers';
+import { cn, numberToStringTime, SECTIONS } from './helpers';
 import { useNotification } from './modules/Notification/NotificationProvider';
 import moment from 'moment';
 import Charts from './modules/Charts/Charts';
-import {Simulate} from "react-dom/test-utils";
-import error = Simulate.error;
 
 export type ChartsData = {
     username: string;
@@ -71,9 +69,7 @@ const App = () => {
                 {members === 0 ? (
                     <div className={cn([styles.skeletonTotalTime, styles.skeleton])}></div>
                 ) : (
-                    <div className={styles.blackHighLight}>
-                        {numberToStringTime(totalTime)}
-                    </div>
+                    <div className={styles.blackHighLight}>{numberToStringTime(totalTime)}</div>
                 )}
                 <>in</>
                 <div className={styles.blueHighLight}>
@@ -130,7 +126,7 @@ const App = () => {
             <Leaderboard
                 tableCode="2PACX-1vTkWoLikMzDn43FXNi_yS73ReU3Ay_RT1ue4N69X1omhlECHWqas20aGHCzGQ1T9bw4FTG2W975pbRP"
                 onMembersChange={(count) => setMembers(count)}
-                onTimeChange={(time: number)=> setTotalTime(q => q + time)}
+                onTimeChange={(time: number) => setTotalTime((q) => q + time)}
                 onLoad={handleLoadData}
                 onError={(message: string) => setErrorMessage(message)}
             />

@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useAsync } from 'react-use-custom-hooks';
 import axios from 'axios';
 import { cn, numberToStringTime, timeToNumber } from '../../helpers';
-import {useNotification} from "../Notification/NotificationProvider";
+import { useNotification } from '../Notification/NotificationProvider';
 
 type LeaderboardProps = {
     tableCode: string;
