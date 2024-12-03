@@ -1,6 +1,6 @@
 .containerBackground {
     width: 344px;
-    background-color: #fff;
+    background-color: var(--default-color);
     position: fixed;
     bottom: 16px;
     right: -344px;

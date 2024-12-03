@@ -6,13 +6,15 @@ import { ChartsData } from '../../App';
 import BubbleChart from './BubbleChart';
 import Loader from 'react-ts-loaders';
 import { useNotification } from '../Notification/NotificationProvider';
+import { Theme } from '../Theme/ThemeProvider';
 
 type ChartsProps = {
     data: ChartsData[];
+    theme: Theme;
     error?: string;
 };
 
-const Charts: React.FC<ChartsProps> = ({ data, error }) => {
+const Charts: React.FC<ChartsProps> = ({ data, theme, error }) => {
     const { showNotification } = useNotification();
 
     const isLoading = data.length === 0;
@@ -72,14 +74,14 @@ const Charts: React.FC<ChartsProps> = ({ data, error }) => {
                                 {isLoading ? (
                                     <Loader type="dotspinner" color="var(--blue)" size={100} />
                                 ) : (
-                                    <DoughnutChart rawData={data.map((item) => item.ide)} />
+                                    <DoughnutChart rawData={data.map((item) => item.ide)} theme={theme} />
                                 )}
                             </div>
                             <div className={styles.simpleChart}>
                                 {isLoading ? (
                                     <Loader type="dotspinner" color="var(--blue)" size={100} />
                                 ) : (
-                                    <DoughnutChart rawData={data.map((item) => item.language)} />
+                                    <DoughnutChart rawData={data.map((item) => item.language)} theme={theme} />
                                 )}
                             </div>
                         </div>

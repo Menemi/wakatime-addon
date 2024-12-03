@@ -1,7 +1,8 @@
 :root {
-    --blue: #1f6feb;
-    --border: #d4d4d4;
-    --dark-gray: #4c4c4c;
+    --blue: #0b66d1;
+    --border: #c8d0d7;
+    --border-hover: #e1e1e1;
+    --text-color: #4c4c4c;
     --info-text: #3a74cb;
     --success-text: #0a9731;
     --warning-text: #d49d1d;
@@ -14,6 +15,19 @@
     --success-background-hover: rgba(0, 185, 45, .32);
     --warning-background-hover: rgba(255, 221, 45, .32);
     --error-background-hover: rgba(245, 34, 34, .32);
+    --contrast-color: #000;
+    --contrast-color-hover: #323232;
+    --default-color: #f4f4f4;
+}
+
+[data-theme='dark'] {
+    --contrast-color: #fff;
+    --contrast-color-hover: #cdcdcd;
+    --default-color: #212830;
+    --text-color: #c8ced7;
+    --blue: #4586dd;
+    --border: #3c424b;
+    --border-hover: #494f58;
 }
 
 * {
@@ -22,7 +36,7 @@
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    color: var(--dark-gray);
+    color: var(--text-color);
     list-style-type: none;
     transition: 250ms all ease;
     cursor: default;
@@ -33,10 +47,18 @@
     user-select: none;
 }
 
+::-webkit-scrollbar {
+    width: 0;
+}
+
 html {
     /* <высота header> 128 + <gap> 32 */
     scroll-padding-top: 160px;
     scroll-behavior: smooth;
+}
+
+html, body {
+    background-color: var(--default-color);
 }
 
 button {
@@ -46,26 +68,23 @@ button {
     box-shadow: none;
 }
 
+
 .container {
     display: flex;
     flex-direction: column;
     gap: 32px;
-
     min-height: 100dvh;
     /* <высота header> 128 + <gap> 32 */
     padding: 160px 32px 32px 32px;
-
-    background-color: white;
+    background-color: var(--default-color);
 }
 
 .header {
     position: fixed;
     top: 0;
     left: 0;
-
     display: flex;
     justify-content: space-between;
-
     width: 100%;
     height: 128px;
     padding: 16px;
@@ -82,7 +101,7 @@ button {
     gap: 16px;
 }
 
-.headerButtonsContainer {
+.headerButtonsContainer, .headerRightPart {
     display: flex;
     align-items: center;
     gap: 16px;
@@ -111,6 +130,15 @@ button {
     font-size: 2em;
 }
 
+.themeBtn i {
+    color: var(--contrast-color);
+}
+
+.themeBtn i:hover {
+    color: var(--contrast-color-hover);
+    cursor: pointer;
+}
+
 .members {
     font-size: 1.25em;
 }
@@ -125,8 +153,8 @@ button {
     height: 32px;
 }
 
-.blackHighLight {
-    color: black;
+.highLight {
+    color: var(--contrast-color);
 }
 
 .totalTime {
@@ -139,7 +167,7 @@ button {
 .skeleton {
     border-radius: 8px;
     background: #eee;
-    background: linear-gradient(110deg, var(--border) 8%, #e1e1e1 18%, var(--border) 33%);
+    background: linear-gradient(110deg, var(--border) 8%, var(--border-hover) 18%, var(--border) 33%);
     background-size: 200% 100%;
     animation: 1.5s shine linear infinite;
 }

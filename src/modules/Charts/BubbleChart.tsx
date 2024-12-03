@@ -51,7 +51,7 @@ const BubbleChart: React.FC<BubbleChartProps> = ({ data, size }) => {
                 .attr('cx', (d) => d.x!)
                 .attr('cy', (d) => d.y!)
                 .attr('fill', (d, i) => d3.schemeCategory10[i % 10])
-                .attr('stroke', '#fff')
+                .attr('stroke', 'var(--default-color)')
                 .attr('stroke-size.width', 2);
 
             svg.selectAll('text')
@@ -62,7 +62,7 @@ const BubbleChart: React.FC<BubbleChartProps> = ({ data, size }) => {
                 .attr('text-anchor', 'middle')
                 .attr('dy', '0.35em')
                 .attr('font-size', '12px')
-                .attr('fill', '#fff')
+                .attr('fill', 'var(--contrast-color)')
                 .text((d) => d.username);
         }
 

@@ -13,7 +13,7 @@
     writing-mode: vertical-rl;
     text-orientation: sideways;
     transform: rotate(180deg);
-    color: black;
+    color: var(--contrast-color);
 }
 
 .tableContainer {
@@ -76,7 +76,7 @@
     height: 20px;
     border-radius: 8px;
     background: #eee;
-    background: linear-gradient(110deg, var(--border) 8%, #e1e1e1 18%, var(--border) 33%);
+    background: linear-gradient(110deg, var(--border) 8%, var(--border-hover) 18%, var(--border) 33%);
     background-size: 200% 100%;
     animation: 1.5s shine linear infinite;
 }
@@ -114,7 +114,7 @@
 .tableHead .row {
     position: sticky;
     top: 0;
-    background-color: #fff;
+    background-color: var(--default-color);
 }
 
 .row:nth-child(-n + 3) {
@@ -136,12 +136,12 @@
 
 .tableHead .cell,
 .modifiedCell {
-    color: #000;
+    color: var(--contrast-color);
     font-weight: 800;
 }
 
 .modifiedCell i {
-    color: #000;
+    color: var(--contrast-color);
 }
 
 .modifiedCell:hover,
@@ -169,7 +169,7 @@
 }
 
 .tableHead .cell:nth-child(-n + 2) {
-    background-color: #fff;
+    background-color: var(--default-color);
 }
 
 .tableBody .row:last-child .cell,

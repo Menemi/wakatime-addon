@@ -1,15 +1,17 @@
 import React from 'react';
 import { ArcElement, Chart as ChartJS, Tooltip, Colors, Legend, Title } from 'chart.js';
 import { Doughnut } from 'react-chartjs-2';
+import { Theme } from '../Theme/ThemeProvider';
 
 ChartJS.register(ArcElement, Legend, Title, Colors, Tooltip);
 
 type DoughnutChartProps = {
     title?: string;
     rawData: string[];
+    theme: Theme;
 };
 
-const DoughnutChart: React.FC<DoughnutChartProps> = ({ title, rawData }) => {
+const DoughnutChart: React.FC<DoughnutChartProps> = ({ title, rawData, theme }) => {
     const data = Object.fromEntries(
         Object.entries(
             rawData.reduce<Record<string, number>>((acc, item) => {
@@ -44,6 +46,7 @@ const DoughnutChart: React.FC<DoughnutChartProps> = ({ title, rawData }) => {
                         forceOverride: true,
                     },
                 },
+                borderColor: theme === 'light' ? '#e1e1e1' : '#3c424b',
             }}
         />
     );

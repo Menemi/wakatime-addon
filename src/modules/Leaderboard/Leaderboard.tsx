@@ -43,7 +43,7 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ tableCode, onMembersChange, o
                 username: values[1],
                 currentWeekCodeTime: timeToNumber(values[2]),
                 language: values[3],
-                ide: values[4],
+                ide: values[4].toLowerCase().includes('rider') ? 'Rider' : values[4],
                 avgDayCodeTime: timeToNumber(values[5]),
                 mainProject: values[6],
                 isCodingNow: values[7].includes('✅'),
@@ -132,7 +132,7 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ tableCode, onMembersChange, o
                     <>–</>
                 ) : (
                     <div className={styles.project}>
-                        <div className={styles.blackHighlight}>{row.mainProject}</div>
+                        <div className={styles.highlight}>{row.mainProject}</div>
                         <div>
                             [{row.ide} – {row.language}]
                         </div>

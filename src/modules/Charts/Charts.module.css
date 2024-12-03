@@ -15,7 +15,7 @@
     writing-mode: vertical-rl;
     text-orientation: sideways;
     transform: rotate(180deg);
-    color: black;
+    color: var(--contrast-color);
 }
 
 .chartsContainer {
@@ -85,7 +85,7 @@
 .tooltipContainer {
     width: 100px;
     height: 30px;
-    background-color: black;
+    background-color: var(--contrast-color);
     border-radius: 16px;
 }
 

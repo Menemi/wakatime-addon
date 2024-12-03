@@ -8,6 +8,7 @@ import { cn, numberToStringTime, SECTIONS } from './helpers';
 import { useNotification } from './modules/Notification/NotificationProvider';
 import moment from 'moment';
 import Charts from './modules/Charts/Charts';
+import { useTheme } from './modules/Theme/ThemeProvider';
 
 export type ChartsData = {
     username: string;
@@ -24,6 +25,7 @@ const App = () => {
     const [activeSection, setActiveSection] = useState('');
     const [chartsData, setChartsData] = useState<ChartsData[]>([]);
     const [errorMessage, setErrorMessage] = useState<string>();
+    const { theme, toggleTheme } = useTheme();
 
     const { showNotification } = useNotification();
 
@@ -69,7 +71,7 @@ const App = () => {
                 {members === 0 ? (
                     <div className={cn([styles.skeletonTotalTime, styles.skeleton])}></div>
                 ) : (
-                    <div className={styles.blackHighLight}>{numberToStringTime(totalTime)}</div>
+                    <div className={styles.highLight}>{numberToStringTime(totalTime)}</div>
                 )}
                 <>in</>
                 <div className={styles.blueHighLight}>
@@ -87,7 +89,7 @@ const App = () => {
                         username: item.username,
                         totalCodingTimeMins: (item.currentWeekCodeTime - (item.currentWeekCodeTime % 60)) / 60,
                         language: item.language,
-                        ide: item.ide.toLowerCase().includes('rider') ? 'Rider' : item.ide,
+                        ide: item.ide,
                         mainProject: item.mainProject,
                         isCodingNow: item.isCodingNow,
                     });
@@ -102,7 +104,7 @@ const App = () => {
             <header className={styles.header}>
                 <div className={styles.headerMainInfo}>
                     <div className={styles.titleContainer}>
-                        <h1 className={cn([styles.title, styles.blackHighLight])}>Leaderboard • ITMO Team</h1>
+                        <h1 className={cn([styles.title, styles.highLight])}>ITMO Team</h1>
                         {members === 0 ? (
                             <div className={cn([styles.skeletonMembers, styles.skeleton])}></div>
                         ) : (
@@ -111,16 +113,31 @@ const App = () => {
                     </div>
                     <div className={styles.totalTime}>{getTotalTime()}</div>
                 </div>
-                <div className={styles.headerButtonsContainer}>
-                    {SECTIONS.map((section) => (
-                        <a
-                            key={section.id}
-                            href={`#${section.id}`}
-                            className={activeSection === section.id ? styles.activeButton : styles.button}
-                        >
-                            {section.title}
-                        </a>
-                    ))}
+                <div className={styles.headerRightPart}>
+                    <div className={styles.headerButtonsContainer}>
+                        {SECTIONS.map((section) => (
+                            <a
+                                key={section.id}
+                                href={`#${section.id}`}
+                                className={activeSection === section.id ? styles.activeButton : styles.button}
+                            >
+                                {section.title}
+                            </a>
+                        ))}
+                    </div>
+                    <div onClick={toggleTheme} className={styles.themeBtn}>
+                        {window.innerWidth > 450 ? (
+                            theme === 'light' ? (
+                                <i className="bx bx-moon bx-md" />
+                            ) : (
+                                <i className="bx bx-sun bx-md" />
+                            )
+                        ) : theme === 'light' ? (
+                            <i className="bx bx-moon bx-sm" />
+                        ) : (
+                            <i className="bx bx-sun bx-sm" />
+                        )}
+                    </div>
                 </div>
             </header>
             <Leaderboard
@@ -131,7 +148,7 @@ const App = () => {
                 onError={(message: string) => setErrorMessage(message)}
             />
             <GlobalTop tableCode="2PACX-1vSBOyyJfO0qXuA8WIxiQsDD5wVib2NT7U2RwrvV8dv26OZKKBn5ZJyS-VT3f-f_ekb3JtcxgdAA3Thb" />
-            <Charts data={chartsData} error={errorMessage} />
+            <Charts data={chartsData} error={errorMessage} theme={theme} />
             <SectionObserver sections={SECTIONS.map((section) => section.id)} setActiveSection={setActiveSection} />
         </div>
     );

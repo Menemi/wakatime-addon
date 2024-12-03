@@ -11,6 +11,6 @@
 - [x] finish the skeleton of web-resource while the data is loading (i don't wanna make the user sad)
 - [x] sort in GlobalTop (by: `topN`, `BW Code Time`)
 - [x] send a notification if the data can't load + add error skeleton
-- [ ] theme toggle (`light` / `dark`) with saving the selection on each device
+- [x] theme toggle (`light` / `dark`) with saving the selection on each device
 - [ ] filter in Leaderboard (by: `Coding Now`, `Project -> lang`, `Project -> ide`)
 - [ ] other prikoli that i haven't come up with yet
