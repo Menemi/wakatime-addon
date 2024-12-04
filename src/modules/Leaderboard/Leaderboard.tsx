@@ -106,7 +106,7 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ tableCode, onMembersChange, o
     useEffect(() => {
         const intervalId = setInterval(() => {
             load();
-        }, 5000);
+        }, 30000);
 
         return () => clearInterval(intervalId);
     }, [load]);
