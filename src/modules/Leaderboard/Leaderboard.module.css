@@ -62,6 +62,7 @@
 }
 
 .table {
+    height: max-content;
     position: relative;
     width: 100%;
     padding: 0 16px;
@@ -103,11 +104,11 @@
     border-radius: 8px;
     margin-top: 8px;
     padding: 8px 16px;
-    background-color: var(--info-background);
+    background-color: var(--default-background);
 }
 
 .refreshButton:hover {
-    background-color: var(--info-background-hover);
+    background-color: var(--default-background-hover);
     cursor: pointer;
 }
 
@@ -128,9 +129,26 @@
     border-bottom: 1px solid var(--border);
 }
 
-.tableHead .cell {
+.modifiedCell {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    width: max-content;
+}
+
+.tableHead .cell,
+.modifiedCell {
     color: var(--contrast-color);
     font-weight: 800;
+}
+
+.modifiedCell i {
+    color: var(--contrast-color);
+}
+
+.modifiedCell:hover,
+.modifiedCell i:hover {
+    cursor: pointer;
 }
 
 .tableBody .row:hover {

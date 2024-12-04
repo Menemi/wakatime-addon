@@ -3,8 +3,10 @@ import styles from './Leaderboard.module.css';
 import React, { useEffect, useState } from 'react';
 import { useAsync } from 'react-use-custom-hooks';
 import axios from 'axios';
-import { cn, numberToStringTime, timeToNumber } from '../../helpers';
+import { cn, getUniqItemsFromStringArr, numberToStringTime, timeToNumber } from '../../helpers';
 import { useNotification } from '../Notification/NotificationProvider';
+import Dropdown from '../Dropdown/Dropdown';
+import _ from 'lodash';
 
 type LeaderboardProps = {
     tableCode: string;
@@ -25,15 +27,30 @@ export type LeaderboardRow = {
     isCodingNow: boolean;
 };
 
+type SelectedFilters = {
+    codingNow: string[];
+    languages: string[];
+};
+
 const Leaderboard: React.FC<LeaderboardProps> = ({ tableCode, onMembersChange, onTimeChange, onLoad, onError }) => {
     const [data, setData] = useState<LeaderboardRow[]>([]);
-    const [totalTime, setTotalTime] = useState(0);
+    const [filteredData, setFilteredData] = useState<LeaderboardRow[]>(data);
+    const [defaultSelectedFilters, setDefaultSelectedFilters] = useState<SelectedFilters>({
+        codingNow: ['online', 'offline'],
+        languages: [],
+    });
+
+    const [selectedFilters, setSelectedFilters] = useState<SelectedFilters>(defaultSelectedFilters);
 
     const { showNotification } = useNotification();
 
     const csvUrl = `https://docs.google.com/spreadsheets/d/e/${tableCode}/pub?gid=0&single=true&output=csv`;
 
-    const parseData = (input: string) => {
+    const isObjectsEqual = (a: Object, b: Object) => {
+        return _.isEqual(a, b);
+    };
+
+    const parseData = (input: string): LeaderboardRow[] => {
         const rows = input.trim().split('\n');
         return rows.slice(1).map((row) => {
             const values = row.split(',');
@@ -42,13 +59,41 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ tableCode, onMembersChange, o
                 number: +values[0],
                 username: values[1],
                 currentWeekCodeTime: timeToNumber(values[2]),
-                language: values[3],
+                language: values[3] || '–',
                 ide: values[4].toLowerCase().includes('rider') ? 'Rider' : values[4],
                 avgDayCodeTime: timeToNumber(values[5]),
-                mainProject: values[6],
+                mainProject: values[6] || '–',
                 isCodingNow: values[7].includes('✅'),
             };
         }, {});
+    };
+
+    const filterData = (rawData: LeaderboardRow[]) => {
+        if (isObjectsEqual(selectedFilters, defaultSelectedFilters)) {
+            return rawData;
+        }
+
+        return rawData.reduce<LeaderboardRow[]>((acc, item) => {
+            const flag =
+                selectedFilters.codingNow.length > 0
+                    ? selectedFilters.codingNow?.includes(item.isCodingNow ? 'online' : 'offline')
+                    : true;
+            if (
+                (selectedFilters.languages?.includes(item.ide) || selectedFilters.languages?.includes(item.language)) &&
+                flag
+            ) {
+                acc.push(item);
+            }
+
+            return acc;
+        }, []);
+    };
+
+    const handleChangeFilters = (filters: string[], column: 'project' | 'codingNow') => {
+        setSelectedFilters((q) => ({
+            codingNow: column === 'codingNow' ? filters : q.codingNow,
+            languages: column === 'codingNow' ? q.languages : filters,
+        }));
     };
 
     const [rawData, isLoading, error, load] = useAsync(
@@ -66,23 +111,18 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ tableCode, onMembersChange, o
     }, [load]);
 
     useEffect(() => {
-        if (!isLoading && !error && data.length === 0) {
+        if (!isLoading && !error) {
             const parsedData = parseData(rawData);
 
             setData(parsedData);
             onLoad(parsedData);
             onMembersChange(parsedData.length);
-        }
-    }, [isLoading, error]);
 
-    useEffect(() => {
-        if (!isLoading && !error && totalTime === 0) {
-            data.forEach((row) => {
-                setTotalTime((q) => q + row.currentWeekCodeTime);
+            parsedData.forEach((row) => {
                 onTimeChange(row.currentWeekCodeTime);
             });
         }
-    }, [isLoading, error, data]);
+    }, [isLoading, error]);
 
     useEffect(() => {
         if (error) {
@@ -97,6 +137,18 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ tableCode, onMembersChange, o
             });
         }
     }, [error]);
+
+    useEffect(() => {
+        setDefaultSelectedFilters({
+            codingNow: ['online', 'offline'],
+            languages: getUniqItemsFromStringArr(data.map((item) => item.language)),
+        });
+    }, [data]);
+
+    useEffect(() => {
+        const filteredData = data.length === 0 ? data : filterData(data);
+        setFilteredData(filteredData);
+    }, [selectedFilters]);
 
     const skeletonRowsNumber = Math.floor(window.innerHeight / 50) - 4;
 
@@ -121,9 +173,9 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ tableCode, onMembersChange, o
         </div>
     );
 
-    const table = data.map((row: LeaderboardRow, key: number) => (
+    const table = filteredData.map((row: LeaderboardRow, key: number) => (
         <tr key={key} className={styles.row}>
-            <td className={styles.cell}>{row.number}</td>
+            <td className={styles.cell}>{key + 1}</td>
             <td className={styles.cell}>{row.username}</td>
             <td className={styles.cell}>{numberToStringTime(row.currentWeekCodeTime)}</td>
             <td className={styles.cell}>{numberToStringTime(row.avgDayCodeTime)}</td>
@@ -165,8 +217,37 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ tableCode, onMembersChange, o
                                 <td className={styles.cell}>Username</td>
                                 <td className={styles.cell}>Hours Coded</td>
                                 <td className={styles.cell}>Daily Average</td>
-                                <td className={styles.cell}>Project</td>
-                                <td className={styles.cell}>Coding Now</td>
+                                <td className={styles.cell}>
+                                    {!isLoading ? (
+                                        <Dropdown
+                                            data={getUniqItemsFromStringArr(data.map((item) => item.language))}
+                                            onFiltersChange={(filters) => handleChangeFilters(filters, 'project')}
+                                        >
+                                            <div className={styles.modifiedCell}>
+                                                <>Project</>
+                                                <i className="bx bx-filter-alt bx-sm" />
+                                            </div>
+                                        </Dropdown>
+                                    ) : (
+                                        <>Project</>
+                                    )}
+                                </td>
+                                <td className={styles.cell}>
+                                    {!isLoading ? (
+                                        <Dropdown
+                                            data={['online', 'offline']}
+                                            onFiltersChange={(filters) => handleChangeFilters(filters, 'codingNow')}
+                                            selectType='radio'
+                                        >
+                                            <div className={styles.modifiedCell}>
+                                                <>Coding Now</>
+                                                <i className="bx bx-filter-alt bx-sm" />
+                                            </div>
+                                        </Dropdown>
+                                    ) : (
+                                        <>Coding Now</>
+                                    )}
+                                </td>
                             </tr>
                         </thead>
                         <tbody className={styles.tableBody}>{isLoading && data.length === 0 ? skeleton : table}</tbody>

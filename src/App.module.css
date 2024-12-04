@@ -3,21 +3,23 @@
     --border: #c8d0d7;
     --border-hover: #e1e1e1;
     --text-color: #4c4c4c;
+    --contrast-color: #000;
+    --contrast-color-hover: #323232;
+    --default-color: #f4f4f4;
     --info-text: #3a74cb;
     --success-text: #0a9731;
     --warning-text: #d49d1d;
     --error-text: #c22425;
-    --info-background: #428BF929;
-    --success-background: #00B92D29;
-    --warning-background: #FFDD2D24;
-    --error-background: #F5222224;
+    --default-background: rgba(232, 232, 232, 0.64);
+    --info-background: rgba(66, 139, 249, .16);
+    --success-background: rgba(0, 185, 45, .16);
+    --warning-background: rgba(255, 221, 45, .16);
+    --error-background: rgba(245, 34, 34, .16);
+    --default-background-hover: rgb(232, 232, 232);
     --info-background-hover: rgba(66, 139, 249, .32);
     --success-background-hover: rgba(0, 185, 45, .32);
     --warning-background-hover: rgba(255, 221, 45, .32);
     --error-background-hover: rgba(245, 34, 34, .32);
-    --contrast-color: #000;
-    --contrast-color-hover: #323232;
-    --default-color: #f4f4f4;
 }
 
 [data-theme='dark'] {
@@ -28,6 +30,8 @@
     --blue: #4586dd;
     --border: #3c424b;
     --border-hover: #494f58;
+    --default-background: rgba(45, 52, 60, 0.64);
+    --default-background-hover: rgb(45, 52, 60);
 }
 
 * {
@@ -68,6 +72,9 @@ button {
     box-shadow: none;
 }
 
+button:hover {
+    cursor: pointer;
+}
 
 .container {
     display: flex;

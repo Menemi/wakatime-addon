@@ -86,11 +86,7 @@ const GlobalTop: React.FC<GlobalTopProps> = ({ tableCode }) => {
         if (!isLoading && !error) {
             const parsedData = parseData(rawData);
             const sortedData = sortData(parsedData, sortParam, sortDirection);
-            const result = sortedData.map((item, idx) => ({
-                ...item,
-                number: idx + 1,
-            }));
-            setData(result);
+            setData(sortedData);
         }
     }, [isLoading, error, sortParam, sortDirection]);
 
@@ -142,7 +138,7 @@ const GlobalTop: React.FC<GlobalTopProps> = ({ tableCode }) => {
 
     const table = data.map((row: GlobalTopRow, key: number) => (
         <tr key={key} className={styles.row}>
-            <td className={styles.cell}>{row.number}</td>
+            <td className={styles.cell}>{key + 1}</td>
             <td className={styles.cell}>{row.username}</td>
             <td className={styles.cell}>{row.top1 || '–'}</td>
             <td className={styles.cell}>{row.top2 || '–'}</td>

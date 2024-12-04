@@ -1,14 +1,14 @@
 /**
- * Преобразует строку времени в формате 'HH:MM:SS' в количество секунд.
+ * Преобразует строку времени в формате 'HH:MM:SS' в количество секунд
  *
- * @param {string} time - Время в формате 'HH:MM:SS'.
- * @returns {number} - Общее количество секунд, соответствующее заданному времени.
+ * @param {string} time - Время в формате 'HH:MM:SS'
+ * @returns {number} - Общее количество секунд, соответствующее заданному времени
  *
  * @example
  * // Возвращает 3600
  * timeToNumber('01:00:00');
  */
-export const timeToNumber = (time: string) => {
+export const timeToNumber = (time: string): number => {
     if (time === '') {
         return 0;
     }
@@ -30,7 +30,7 @@ export const timeToNumber = (time: string) => {
  * // Возвращает '1 hrs 30 mins'
  * numberToStringTime(5400);
  */
-export const numberToStringTime = (time: number) => {
+export const numberToStringTime = (time: number): string => {
     if (time === 0) {
         return '–';
     }
@@ -54,6 +54,25 @@ export const calcGlobalTopScore = (values: { top1: number; top2: number; top3: n
 export const cn = (classes: string[]) => {
     return classes.join(' ');
 };
+
+/**
+ * Возвращает массив уникальных строк из заданного массива строк
+ *
+ * @param {string[]} arr - Массив строк, из которого нужно извлечь уникальные элементы
+ * @returns {string[]} - Новый массив, содержащий только уникальные строки из исходного массива
+ *
+ * @example
+ * // Возвращает ['WebStorm', 'Rider']
+ * getUniqItemsFromStringArr(['WebStorm', 'WebStorm', 'Rider']);
+ */
+export const getUniqItemsFromStringArr = (arr: string[]): string[] =>
+    arr.reduce<string[]>((acc, item) => {
+        if (!acc.includes(item)) {
+            acc.push(item);
+        }
+
+        return acc;
+    }, []);
 
 export const SECTIONS = [
     {
