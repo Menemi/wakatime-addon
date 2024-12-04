@@ -1,11 +1,11 @@
 /**
- * Преобразует строку времени в формате 'HH:MM:SS' в количество секунд
+ * Преобразует строку времени в формате `'HH:MM:SS'` в количество секунд
  *
- * @param {string} time - Время в формате 'HH:MM:SS'
+ * @param {string} time - Время в формате `'HH:MM:SS'`
  * @returns {number} - Общее количество секунд, соответствующее заданному времени
  *
  * @example
- * // Возвращает 3600
+ * // 3600
  * timeToNumber('01:00:00');
  */
 export const timeToNumber = (time: string): number => {
@@ -24,10 +24,10 @@ export const timeToNumber = (time: string): number => {
  * Преобразует количество секунд в удобочитаемую строку
  *
  * @param {string} time - Количество секунд
- * @returns {string} - Строка, представляющая время в формате 'X hrs Y mins', 'X hrs', 'Y mins' или '–'
+ * @returns {string} - Строка в формате `'X hrs Y mins'`, `'X hrs'`, `'Y mins'` или `'–'`
  *
  * @example
- * // Возвращает '1 hrs 30 mins'
+ * // '1 hrs 30 mins'
  * numberToStringTime(5400);
  */
 export const numberToStringTime = (time: number): string => {
@@ -62,7 +62,7 @@ export const cn = (classes: string[]) => {
  * @returns {string[]} - Новый массив, содержащий только уникальные строки из исходного массива
  *
  * @example
- * // Возвращает ['WebStorm', 'Rider']
+ * // ['WebStorm', 'Rider']
  * getUniqItemsFromStringArr(['WebStorm', 'WebStorm', 'Rider']);
  */
 export const getUniqItemsFromStringArr = (arr: string[]): string[] =>
@@ -73,6 +73,101 @@ export const getUniqItemsFromStringArr = (arr: string[]): string[] =>
 
         return acc;
     }, []);
+
+/**
+ * Сравнивает два объекта на равенство
+ *
+ * @param {any} obj - Первый объект для сравнения
+ * @param {any} obj2 - Второй объект для сравнения
+ * @returns {boolean} - `true`, если объекты равны, иначе `false`
+ *
+ * @example
+ * // true
+ * isObjectsEqual({ a: 1, b: 2 }, { a: 1, b: 2 });
+ *
+ * @example
+ * // false
+ * isObjectsEqual({ a: 1, b: 2 }, { a: 1, b: 3 });
+ */
+export const isObjectsEqual = (obj: any, obj2: any): boolean => {
+    if (obj === obj2) {
+        return true;
+    }
+
+    for (let propName in obj) {
+        if (obj.hasOwnProperty(propName) !== obj2.hasOwnProperty(propName)) {
+            return false;
+        } else if (typeof obj[propName] !== typeof obj2[propName]) {
+            return false;
+        }
+    }
+
+    for (let propName in obj2) {
+        if (obj.hasOwnProperty(propName) !== obj2.hasOwnProperty(propName)) {
+            return false;
+        } else if (typeof obj[propName] !== typeof obj2[propName]) {
+            return false;
+        }
+
+        if (!obj.hasOwnProperty(propName)) {
+            continue;
+        }
+
+        if (obj[propName] !== obj2[propName]) {
+            return false;
+        }
+    }
+
+    return true;
+};
+
+/**
+ * Сравнивает два массива на равенство
+ *
+ * @param {Array<any>} arr - Первый массив для сравнения
+ * @param {Array<any>} arr2 - Второй массив для сравнения
+ * @returns {boolean} - `true`, если массивы равны, иначе `false`
+ *
+ * @example
+ * // true
+ * isArraysEqual([1, 2, 3], [1, 2, 3]);
+ *
+ * @example
+ * // true
+ * isArraysEqual([1, 2, 3], [3, 2, 1]);
+ *
+ * @example
+ * // false
+ * isArraysEqual([1, 2, 3], [1, 2]);
+ *
+ * @example
+ * // true
+ * isArraysEqual([1, 2], [1, 2, 3]);
+ */
+export const isArraysEqual = (arr: Array<any>, arr2: Array<any>): boolean => {
+    if (!arr || !arr2) {
+        return false;
+    }
+
+    if (arr === arr2) {
+        return true;
+    }
+
+    if (arr.length !== arr2.length) {
+        return false;
+    }
+
+    return (
+        arr.every((item) => arr2.includes(item)) ||
+        arr.every((item) =>
+            Boolean(
+                arr2.find((item2) => {
+                    return isObjectsEqual(item, item2);
+                }),
+            ),
+        )
+    );
+};
 
 export const SECTIONS = [
     {

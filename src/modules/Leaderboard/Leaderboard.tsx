@@ -3,7 +3,7 @@ import styles from './Leaderboard.module.css';
 import React, { useEffect, useState } from 'react';
 import { useAsync } from 'react-use-custom-hooks';
 import axios from 'axios';
-import { cn, getUniqItemsFromStringArr, numberToStringTime, timeToNumber } from '../../helpers';
+import { cn, getUniqItemsFromStringArr, isArraysEqual, numberToStringTime, timeToNumber } from '../../helpers';
 import { useNotification } from '../Notification/NotificationProvider';
 import Dropdown from '../Dropdown/Dropdown';
 import _ from 'lodash';
@@ -40,6 +40,7 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ tableCode, onMembersChange, o
         languages: [],
     });
 
+    const [dropdownData, setDropdownData] = useState<string[]>([]);
     const [selectedFilters, setSelectedFilters] = useState<SelectedFilters>(defaultSelectedFilters);
 
     const { showNotification } = useNotification();
@@ -105,7 +106,7 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ tableCode, onMembersChange, o
     useEffect(() => {
         const intervalId = setInterval(() => {
             load();
-        }, 30000);
+        }, 5000);
 
         return () => clearInterval(intervalId);
     }, [load]);
@@ -114,13 +115,24 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ tableCode, onMembersChange, o
         if (!isLoading && !error) {
             const parsedData = parseData(rawData);
 
-            setData(parsedData);
-            onLoad(parsedData);
-            onMembersChange(parsedData.length);
+            if (!isArraysEqual(data, parsedData)) {
+                setData(parsedData);
+                onLoad(parsedData);
+                onMembersChange(parsedData.length);
 
-            parsedData.forEach((row) => {
-                onTimeChange(row.currentWeekCodeTime);
-            });
+                let totalTime = 0;
+
+                parsedData.forEach((row) => {
+                    totalTime += row.currentWeekCodeTime;
+                });
+
+                onTimeChange(totalTime);
+            }
+
+            const newDropdownData = getUniqItemsFromStringArr(parsedData.map((item) => item.language));
+            if (!isArraysEqual(dropdownData, newDropdownData)) {
+                setDropdownData(newDropdownData);
+            }
         }
     }, [isLoading, error]);
 
@@ -146,8 +158,10 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ tableCode, onMembersChange, o
     }, [data]);
 
     useEffect(() => {
-        const filteredData = data.length === 0 ? data : filterData(data);
-        setFilteredData(filteredData);
+        const newFilteredData = data.length === 0 ? data : filterData(data);
+        if (!isArraysEqual(filteredData, newFilteredData)) {
+            setFilteredData(newFilteredData);
+        }
     }, [selectedFilters]);
 
     const skeletonRowsNumber = Math.floor(window.innerHeight / 50) - 4;
@@ -218,9 +232,9 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ tableCode, onMembersChange, o
                                 <td className={styles.cell}>Hours Coded</td>
                                 <td className={styles.cell}>Daily Average</td>
                                 <td className={styles.cell}>
-                                    {!isLoading ? (
+                                    {data.length !== 0 ? (
                                         <Dropdown
-                                            data={getUniqItemsFromStringArr(data.map((item) => item.language))}
+                                            data={dropdownData}
                                             onFiltersChange={(filters) => handleChangeFilters(filters, 'project')}
                                         >
                                             <div className={styles.modifiedCell}>
@@ -233,11 +247,11 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ tableCode, onMembersChange, o
                                     )}
                                 </td>
                                 <td className={styles.cell}>
-                                    {!isLoading ? (
+                                    {data.length !== 0 ? (
                                         <Dropdown
                                             data={['online', 'offline']}
                                             onFiltersChange={(filters) => handleChangeFilters(filters, 'codingNow')}
-                                            selectType='radio'
+                                            selectType="radio"
                                         >
                                             <div className={styles.modifiedCell}>
                                                 <>Coding Now</>

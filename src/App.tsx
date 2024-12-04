@@ -143,7 +143,7 @@ const App = () => {
             <Leaderboard
                 tableCode="2PACX-1vTkWoLikMzDn43FXNi_yS73ReU3Ay_RT1ue4N69X1omhlECHWqas20aGHCzGQ1T9bw4FTG2W975pbRP"
                 onMembersChange={(count) => setMembers(count)}
-                onTimeChange={(time: number) => setTotalTime((q) => q + time)}
+                onTimeChange={(time: number) => setTotalTime(time)}
                 onLoad={handleLoadData}
                 onError={(message: string) => setErrorMessage(message)}
             />
