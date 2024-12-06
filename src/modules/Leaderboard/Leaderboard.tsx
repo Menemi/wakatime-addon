@@ -6,7 +6,7 @@ import axios from 'axios';
 import { cn, getUniqItemsFromStringArr, isArraysEqual, numberToStringTime, timeToNumber } from '../../helpers';
 import { useNotification } from '../Notification/NotificationProvider';
 import Dropdown from '../Dropdown/Dropdown';
-import _ from 'lodash';
+import _, { set, values } from 'lodash';
 
 type LeaderboardProps = {
     tableCode: string;
@@ -35,12 +35,13 @@ type SelectedFilters = {
 const Leaderboard: React.FC<LeaderboardProps> = ({ tableCode, onMembersChange, onTimeChange, onLoad, onError }) => {
     const [data, setData] = useState<LeaderboardRow[]>([]);
     const [filteredData, setFilteredData] = useState<LeaderboardRow[]>(data);
+    const [searchText, setSearchText] = useState('');
+    const [debouncedSearchText, setDebouncedSearchText] = useState(searchText);
+    const [dropdownData, setDropdownData] = useState<string[]>([]);
     const [defaultSelectedFilters, setDefaultSelectedFilters] = useState<SelectedFilters>({
         codingNow: ['online', 'offline'],
         languages: [],
     });
-
-    const [dropdownData, setDropdownData] = useState<string[]>([]);
     const [selectedFilters, setSelectedFilters] = useState<SelectedFilters>(defaultSelectedFilters);
 
     const { showNotification } = useNotification();
@@ -117,6 +118,9 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ tableCode, onMembersChange, o
 
             if (!isArraysEqual(data, parsedData)) {
                 setData(parsedData);
+                setFilteredData(parsedData.filter((item) =>
+                    item.username.toLowerCase().includes(debouncedSearchText.toLowerCase()),
+                ));
                 onLoad(parsedData);
                 onMembersChange(parsedData.length);
 
@@ -163,6 +167,24 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ tableCode, onMembersChange, o
             setFilteredData(newFilteredData);
         }
     }, [selectedFilters]);
+
+    useEffect(() => {
+        const timer = setTimeout(() => setDebouncedSearchText(searchText), 1500);
+        return () => clearTimeout(timer);
+    }, [searchText]);
+
+    useEffect(() => {
+        const newFilteredData =
+            debouncedSearchText === ''
+                ? data.length === 0
+                    ? data
+                    : filterData(data)
+                : filteredData.filter((item) =>
+                      item.username.toLowerCase().includes(debouncedSearchText.toLowerCase()),
+                  );
+
+        setFilteredData(newFilteredData);
+    }, [debouncedSearchText]);
 
     const skeletonRowsNumber = Math.floor(window.innerHeight / 50) - 4;
 
@@ -228,7 +250,14 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ tableCode, onMembersChange, o
                         <thead className={styles.tableHead}>
                             <tr className={styles.row}>
                                 <td className={styles.cell}>Rank</td>
-                                <td className={styles.cell}>Username</td>
+                                <td className={styles.cell}>
+                                    <input
+                                        type="text"
+                                        onChange={({ target: { value } }) => setSearchText(value)}
+                                        placeholder="Username"
+                                        className={styles.usernameInput}
+                                    />
+                                </td>
                                 <td className={styles.cell}>Hours Coded</td>
                                 <td className={styles.cell}>Daily Average</td>
                                 <td className={styles.cell}>

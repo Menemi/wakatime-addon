@@ -32,10 +32,13 @@ const scoreSortIcons: JSX.Element[] = [
 
 const GlobalTop: React.FC<GlobalTopProps> = ({ tableCode }) => {
     const [data, setData] = useState<GlobalTopRow[]>([]);
+    const [filteredData, setFilteredData] = useState<GlobalTopRow[]>(data);
     const [scoreSortIconIndex, setScoreSortIconIndex] = useState(0);
     const [codeTimeSortIconIndex, setCodeTimeSortIconIndex] = useState(0);
     const [sortParam, setSortParam] = useState<SortParam>('score');
     const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
+    const [searchText, setSearchText] = useState('');
+    const [debouncedSearchText, setDebouncedSearchText] = useState(searchText);
 
     const csvUrl = `https://docs.google.com/spreadsheets/d/e/${tableCode}/pub?gid=0&single=true&output=csv`;
 
@@ -87,8 +90,27 @@ const GlobalTop: React.FC<GlobalTopProps> = ({ tableCode }) => {
             const parsedData = parseData(rawData);
             const sortedData = sortData(parsedData, sortParam, sortDirection);
             setData(sortedData);
+            setFilteredData(sortedData.filter((item) =>
+                item.username.toLowerCase().includes(debouncedSearchText.toLowerCase()),
+            ));
         }
     }, [isLoading, error, sortParam, sortDirection]);
+
+    useEffect(() => {
+        const timer = setTimeout(() => setDebouncedSearchText(searchText), 1500);
+        return () => clearTimeout(timer);
+    }, [searchText]);
+
+    useEffect(() => {
+        const newFilteredData =
+            debouncedSearchText === ''
+                ? data
+                : data.filter((item) =>
+                    item.username.toLowerCase().includes(debouncedSearchText.toLowerCase()),
+                );
+
+        setFilteredData(newFilteredData);
+    }, [debouncedSearchText]);
 
     const handleSortButtonClick = (column: SortParam) => {
         if (column === 'score') {
@@ -136,7 +158,7 @@ const GlobalTop: React.FC<GlobalTopProps> = ({ tableCode }) => {
         </div>
     );
 
-    const table = data.map((row: GlobalTopRow, key: number) => (
+    const table = filteredData.map((row: GlobalTopRow, key: number) => (
         <tr key={key} className={styles.row}>
             <td className={styles.cell}>{key + 1}</td>
             <td className={styles.cell}>{row.username}</td>
@@ -162,7 +184,14 @@ const GlobalTop: React.FC<GlobalTopProps> = ({ tableCode }) => {
                         <thead className={styles.tableHead}>
                             <tr className={styles.row}>
                                 <td className={styles.cell}>Rank</td>
-                                <td className={styles.cell}>Username</td>
+                                <td className={styles.cell}>
+                                    <input
+                                        type="text"
+                                        onChange={({ target: { value } }) => setSearchText(value)}
+                                        placeholder="Username"
+                                        className={styles.usernameInput}
+                                    />
+                                </td>
                                 <td className={styles.cell}>Top 1</td>
                                 <td className={styles.cell}>Top 2</td>
                                 <td className={styles.cell}>Top 3</td>

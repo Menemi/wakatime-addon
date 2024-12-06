@@ -62,6 +62,7 @@
 }
 
 .table {
+    height: max-content;
     position: relative;
     width: 100%;
     padding: 0 16px;
@@ -176,4 +177,17 @@
 .tableBody .row:last-child .cell,
 .tableBody .skeletonRow:last-child .skeletonCell {
     border: none;
+}
+
+.usernameInput {
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background-color: var(--default-color);
+    padding: 4px;
+    color: var(--contrast-color);
+}
+
+.usernameInput:hover, .usernameInput:focus {
+    border: 1px solid var(--contrast-color);
+    cursor: pointer;
 }
