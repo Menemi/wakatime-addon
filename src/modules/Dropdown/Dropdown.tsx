@@ -56,6 +56,10 @@ const Dropdown: React.FC<DropdownProps> = ({ children, data, onFiltersChange, se
             : setSelectedFilters((q) => [...q, item]);
     };
 
+    const handleResetButtonClick = () => {
+        setSelectedFilters(selectType === 'radio' || selectedFilters.length === data.length ? [] : data);
+    };
+
     return (
         <>
             {isVisible && (
@@ -75,11 +79,12 @@ const Dropdown: React.FC<DropdownProps> = ({ children, data, onFiltersChange, se
                             </div>
                         ))}
                     </form>
-                    <button
-                        onClick={() => setSelectedFilters(selectType === 'radio' ? [] : data)}
-                        className={styles.resetBtn}
-                    >
-                        {selectType === 'radio' ? 'Сбросить' : 'Выбрать всё'}
+                    <button onClick={handleResetButtonClick} className={styles.resetBtn}>
+                        {selectType === 'radio'
+                            ? 'Сбросить'
+                            : selectedFilters.length === data.length
+                              ? 'Сбросить всё'
+                              : 'Выбрать всё'}
                     </button>
                 </div>
             )}
