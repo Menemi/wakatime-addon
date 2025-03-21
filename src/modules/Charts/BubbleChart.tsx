@@ -62,7 +62,7 @@ const BubbleChart: React.FC<BubbleChartProps> = ({ data, size }) => {
                 .attr('text-anchor', 'middle')
                 .attr('dy', '0.35em')
                 .attr('font-size', '12px')
-                .attr('fill', 'var(--contrast-color)')
+                .attr('fill', '#fff')
                 .text((d) => d.username);
         }
 

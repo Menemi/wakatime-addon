@@ -1,3 +1,9 @@
+export const SHEET_ID = "1wlv26hMOgvSj0n-2aK4W98GKL-9TUm0hZOuHSY4IBsU";
+export const SHEETS_MAP: Record<string, string> = {
+    leaderboard: "'Рейтинг кодинга'!A2:H",
+    globalTop: "'Топ недель'!A3:I",
+}
+
 /**
  * Преобразует строку времени в формате `'HH:MM:SS'` в количество секунд
  *
@@ -9,7 +15,7 @@
  * timeToNumber('01:00:00');
  */
 export const timeToNumber = (time: string): number => {
-    if (time === '') {
+    if (!time) {
         return 0;
     }
 

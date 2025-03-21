@@ -141,13 +141,12 @@ const App = () => {
                 </div>
             </header>
             <Leaderboard
-                tableCode="2PACX-1vTkWoLikMzDn43FXNi_yS73ReU3Ay_RT1ue4N69X1omhlECHWqas20aGHCzGQ1T9bw4FTG2W975pbRP"
                 onMembersChange={(count) => setMembers(count)}
                 onTimeChange={(time: number) => setTotalTime(time)}
                 onLoad={handleLoadData}
                 onError={(message: string) => setErrorMessage(message)}
             />
-            <GlobalTop tableCode="2PACX-1vSBOyyJfO0qXuA8WIxiQsDD5wVib2NT7U2RwrvV8dv26OZKKBn5ZJyS-VT3f-f_ekb3JtcxgdAA3Thb" />
+            <GlobalTop />
             <Charts data={chartsData} error={errorMessage} theme={theme} />
             <SectionObserver sections={SECTIONS.map((section) => section.id)} setActiveSection={setActiveSection} />
         </div>

@@ -2,14 +2,11 @@ import styles from './GlobalTop.module.css';
 
 import React, { useEffect, useState } from 'react';
 import { useAsync } from 'react-use-custom-hooks';
-import axios from 'axios';
-import { calcGlobalTopScore, cn, numberToStringTime, timeToNumber } from '../../helpers';
+import { calcGlobalTopScore, cn, numberToStringTime, SHEET_ID, SHEETS_MAP, timeToNumber } from '../../helpers';
 
-type GlobalTopProps = {
-    tableCode: string;
-};
+type GlobalTopProps = {};
 
-type GlobalTopRow = {
+export type GlobalTopRow = {
     number: number;
     username: string;
     top1: number;
@@ -30,7 +27,9 @@ const scoreSortIcons: JSX.Element[] = [
     <i className="bx bx-sort-down bx-sm" />,
 ];
 
-const GlobalTop: React.FC<GlobalTopProps> = ({ tableCode }) => {
+const GlobalTop: React.FC<GlobalTopProps> = () => {
+    const API_KEY = process.env.REACT_APP_GOOGLE_API_KEY;
+    console.log(process.env);
     const [data, setData] = useState<GlobalTopRow[]>([]);
     const [filteredData, setFilteredData] = useState<GlobalTopRow[]>(data);
     const [scoreSortIconIndex, setScoreSortIconIndex] = useState(0);
@@ -40,26 +39,17 @@ const GlobalTop: React.FC<GlobalTopProps> = ({ tableCode }) => {
     const [searchText, setSearchText] = useState('');
     const [debouncedSearchText, setDebouncedSearchText] = useState(searchText);
 
-    const csvUrl = `https://docs.google.com/spreadsheets/d/e/${tableCode}/pub?gid=0&single=true&output=csv`;
-
-    const parseData = (input: string): GlobalTopRow[] => {
-        const rows = input.trim().split('\n');
-        return rows.slice(1).map<GlobalTopRow>((row) => {
-            const values = row.split(',');
-            const score = calcGlobalTopScore({ top1: +values[2], top2: +values[3], top3: +values[4] });
-
-            return {
-                number: +values[0],
-                username: values[1],
-                top1: +values[2],
-                top2: +values[3],
-                top3: +values[4],
-                score: score,
-                codeTime: timeToNumber(values[6]),
-                bestWeek: `${values[7]} – ${values[8]}`,
-            };
-        }, {});
-    };
+    const parseData = (input: string[][]): GlobalTopRow[] =>
+        input.map((row) => ({
+            number: +row[0],
+            username: row[1],
+            top1: +row[2],
+            top2: +row[3],
+            top3: +row[4],
+            score: calcGlobalTopScore({ top1: +row[2], top2: +row[3], top3: +row[4] }),
+            codeTime: timeToNumber(row[6]),
+            bestWeek: `${row[7]} – ${row[8]}`,
+        }));
 
     const sortData = (data: GlobalTopRow[], param: SortParam, direction: SortDirection) => {
         return [...data].sort((a, b) => {
@@ -72,7 +62,12 @@ const GlobalTop: React.FC<GlobalTopProps> = ({ tableCode }) => {
     };
 
     const [rawData, isLoading, error, load] = useAsync(
-        () => axios.get(csvUrl).then((response) => response.data),
+        () =>
+            fetch(
+                `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${SHEETS_MAP.globalTop}?key=${API_KEY}`,
+            )
+                .then((res) => res.json())
+                .then((data) => data.values),
         {},
         [],
     );
@@ -90,9 +85,9 @@ const GlobalTop: React.FC<GlobalTopProps> = ({ tableCode }) => {
             const parsedData = parseData(rawData);
             const sortedData = sortData(parsedData, sortParam, sortDirection);
             setData(sortedData);
-            setFilteredData(sortedData.filter((item) =>
-                item.username.toLowerCase().includes(debouncedSearchText.toLowerCase()),
-            ));
+            setFilteredData(
+                sortedData.filter((item) => item.username.toLowerCase().includes(debouncedSearchText.toLowerCase())),
+            );
         }
     }, [isLoading, error, sortParam, sortDirection]);
 
@@ -105,9 +100,7 @@ const GlobalTop: React.FC<GlobalTopProps> = ({ tableCode }) => {
         const newFilteredData =
             debouncedSearchText === ''
                 ? data
-                : data.filter((item) =>
-                    item.username.toLowerCase().includes(debouncedSearchText.toLowerCase()),
-                );
+                : data.filter((item) => item.username.toLowerCase().includes(debouncedSearchText.toLowerCase()));
 
         setFilteredData(newFilteredData);
     }, [debouncedSearchText]);

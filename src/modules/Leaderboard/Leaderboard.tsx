@@ -2,14 +2,20 @@ import styles from './Leaderboard.module.css';
 
 import React, { useEffect, useState } from 'react';
 import { useAsync } from 'react-use-custom-hooks';
-import axios from 'axios';
-import { cn, getUniqItemsFromStringArr, isArraysEqual, numberToStringTime, timeToNumber } from '../../helpers';
+import {
+    cn,
+    getUniqItemsFromStringArr,
+    isArraysEqual,
+    numberToStringTime,
+    SHEET_ID,
+    SHEETS_MAP,
+    timeToNumber,
+} from '../../helpers';
 import { useNotification } from '../Notification/NotificationProvider';
 import Dropdown from '../Dropdown/Dropdown';
-import _, { set, values } from 'lodash';
+import _ from 'lodash';
 
 type LeaderboardProps = {
-    tableCode: string;
     onMembersChange: (members: number) => void;
     onTimeChange: (time: number) => void;
     onLoad: (data: LeaderboardRow[]) => void;
@@ -32,7 +38,8 @@ type SelectedFilters = {
     languages: string[];
 };
 
-const Leaderboard: React.FC<LeaderboardProps> = ({ tableCode, onMembersChange, onTimeChange, onLoad, onError }) => {
+const Leaderboard: React.FC<LeaderboardProps> = ({ onMembersChange, onTimeChange, onLoad, onError }) => {
+    const API_KEY = process.env.REACT_APP_GOOGLE_API_KEY;
     const [data, setData] = useState<LeaderboardRow[]>([]);
     const [filteredData, setFilteredData] = useState<LeaderboardRow[]>(data);
     const [searchText, setSearchText] = useState('');
@@ -46,29 +53,21 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ tableCode, onMembersChange, o
 
     const { showNotification } = useNotification();
 
-    const csvUrl = `https://docs.google.com/spreadsheets/d/e/${tableCode}/pub?gid=0&single=true&output=csv`;
-
     const isObjectsEqual = (a: Object, b: Object) => {
         return _.isEqual(a, b);
     };
 
-    const parseData = (input: string): LeaderboardRow[] => {
-        const rows = input.trim().split('\n');
-        return rows.slice(1).map((row) => {
-            const values = row.split(',');
-
-            return {
-                number: +values[0],
-                username: values[1],
-                currentWeekCodeTime: timeToNumber(values[2]),
-                language: values[3] || '–',
-                ide: values[4].toLowerCase().includes('rider') ? 'Rider' : values[4],
-                avgDayCodeTime: timeToNumber(values[5]),
-                mainProject: values[6] || '–',
-                isCodingNow: values[7].includes('✅'),
-            };
-        }, {});
-    };
+    const parseData = (input: string[][]): LeaderboardRow[] =>
+        input.map((row) => ({
+            number: +row[0],
+            username: row[1],
+            currentWeekCodeTime: timeToNumber(row[2]),
+            language: row[3] || '–',
+            ide: row[4].toLowerCase().includes('rider') ? 'Rider' : row[4],
+            avgDayCodeTime: timeToNumber(row[5]),
+            mainProject: row[6] || '–',
+            isCodingNow: row[7].includes('✅'),
+        }));
 
     const filterData = (rawData: LeaderboardRow[]) => {
         if (isObjectsEqual(selectedFilters, defaultSelectedFilters)) {
@@ -99,7 +98,12 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ tableCode, onMembersChange, o
     };
 
     const [rawData, isLoading, error, load] = useAsync(
-        () => axios.get(csvUrl).then((response) => response.data),
+        () =>
+            fetch(
+                `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${SHEETS_MAP.leaderboard}?key=${API_KEY}`,
+            )
+                .then((res) => res.json())
+                .then((data) => data.values),
         {},
         [],
     );
@@ -118,9 +122,11 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ tableCode, onMembersChange, o
 
             if (!isArraysEqual(data, parsedData)) {
                 setData(parsedData);
-                setFilteredData(parsedData.filter((item) =>
-                    item.username.toLowerCase().includes(debouncedSearchText.toLowerCase()),
-                ));
+                setFilteredData(
+                    parsedData.filter((item) =>
+                        item.username.toLowerCase().includes(debouncedSearchText.toLowerCase()),
+                    ),
+                );
                 onLoad(parsedData);
                 onMembersChange(parsedData.length);
 

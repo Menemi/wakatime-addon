@@ -1,0 +1,28 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.title {
+    color: var(--contrast-color);
+}
+
+.optionsContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.option {
+    display: flex;
+    gap: 4px;
+    white-space: nowrap;
+}
+
+.hrHorizontalGradient {
+    padding: 0;
+    height: 3px;
+    border: none;
+    background: linear-gradient(45deg, #333, #ddd);
+}
