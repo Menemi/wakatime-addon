@@ -29,7 +29,6 @@ const scoreSortIcons: JSX.Element[] = [
 
 const GlobalTop: React.FC<GlobalTopProps> = () => {
     const API_KEY = process.env.REACT_APP_GOOGLE_API_KEY;
-    console.log(process.env);
     const [data, setData] = useState<GlobalTopRow[]>([]);
     const [filteredData, setFilteredData] = useState<GlobalTopRow[]>(data);
     const [scoreSortIconIndex, setScoreSortIconIndex] = useState(0);
